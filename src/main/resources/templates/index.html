@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>脚手架服务平台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="assets/css/iziToast.min.css">
+    <style>
+        .header {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 200%;
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .header p {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+
+    <div class="am-g">
+        <h1><img src="assets/i/favicon.png" width="150" height="150"/></h1>
+        <h1>脚手架服务平台v1.1</h1>
+        <p>目标：为快速拆分服务提供平台支持，自动构建可运行的基础单服务应用、编排文件、路由脚本、以及CI干预配置。</p>
+    </div>
+    <hr/>
+</div>
+<div class="am-g">
+    <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+        <form method="post" class="am-form" action="/generate" onsubmit="return formValidation()">
+            <label for="group">模版:</label>
+            <select id="template" name="template">
+                <option value ="BP">BP</option>
+                <option value ="FMIS">FMIS</option>
+            </select>
+            <br>
+            <label for="group">Group:</label>
+            <input name="group" minlength="3" required id="group" placeholder="指定groupId，如：group.bigplayers.gameserv 或 group.bigplayers.fmis" value=""
+                   class="am-form-field am-radius">
+            <br>
+            <label for="artifact">Artifact:</label>
+            <input name="artifact" minlength="3" required id="artifact" placeholder="服务制品，如：user" value=""
+                   class="am-form-field am-radius">
+            <br>
+            <label for="packageName">PackageName:</label>
+            <input name="packageName" minlength="3" required id="packageName" placeholder="包路径，如：group.bigplayers.gameserv.xxx 或 group.bigplayers.fmis.xxx" value=""
+                   class="am-form-field am-radius">
+            <br>
+            <label for="port">Port:</label>
+            <input name="port" id="port" placeholder="端口号，如：8080" value=""
+                   class="am-form-field am-radius">
+            <br>
+            <label for="version">【选填】Version:</label>
+            <input name="version" id="version" placeholder="版本号，如：1.0.0.0-SNAPSHOT" value=""
+                   class="am-form-field am-radius">
+            <br>
+            <label for="description">【选填】Description:</label>
+            <input name="description" id="description" placeholder="服务名称，如：用户服务" value=""
+                   class="am-form-field am-radius">
+            <br>
+            <div class="am-cf">
+                <input type="submit" name="" value="构 建" class="am-btn am-btn-primary am-btn-sm am-fl">
+            </div>
+        </form>
+        <hr>
+    </div>
+</div>
+<div class="am-g">
+    <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+        <p>~ Thanks ~</href></p>
+    </div>
+</div>
+
+</body>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/iziToast.min.js" type="text/javascript"></script>
+<script>
+    /**
+     *判断是否是数字
+     **/
+    function isRealNum(val){
+        // isNaN()函数 把空串 空格 以及NUll 按照0来处理 所以先去除，
+
+        if(val === "" || val ==null){
+            return false;
+        }
+        if(!isNaN(val)){
+            //对于空数组和只有一个数值成员的数组或全是数字组成的字符串，isNaN返回false，例如：'123'、[]、[2]、['123'],isNaN返回false,
+            //所以如果不需要val包含这些特殊情况，则这个判断改写为if(!isNaN(val) && typeof val === 'number' )
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    let formValidation = function() {
+
+        let template = $('#template').val();
+        let group = $('#group').val();
+        let artifact = $('#artifact').val();
+        let packageName = $('#packageName').val();
+        let port = $('#port').val();
+        let version = $('#version').val();
+        let description = $('#description').val();
+
+        let errMsgs = [];
+        if (template === '') {
+            errMsgs.push('模版类型 不能为空');
+        }
+        if (group === '') {
+            errMsgs.push('Group 不能为空');
+        }
+        if (!packageName.startsWith(group)) {
+            errMsgs.push('PackageName 必须以 group 开头');
+        }
+        if(!isRealNum(port)){
+            errMsgs.push('Port 必须是数字');
+        }
+
+        if (errMsgs.length === 0) {
+            return true;
+        } else {
+            for (let i = 0; i < errMsgs.length; i++) {
+                let errMsg = errMsgs[i];
+                iziToast.warning({
+                    title: 'Caution', 
+                    message: errMsg
+                });
+            }
+            return false;
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>{group}</groupId>
+        <artifactId>{artifact}-admin-parent</artifactId>
+        <version>1.3.2.0-SNAPSHOT</version>
+        <relativePath>../{artifact}-admin-parent</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>{artifact}-admin-service</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>group.bigplayers</groupId>
+            <artifactId>common-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>group.bigplayers</groupId>
+            <artifactId>gameserv-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>{group}</groupId>
+            <artifactId>{artifact}-admin-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>{group}</groupId>
+            <artifactId>{artifact}-admin-adapter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>group.bigplayers</groupId>
+            <artifactId>oss-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>group.bigplayers.t13s</groupId>
+            <artifactId>meaden-spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

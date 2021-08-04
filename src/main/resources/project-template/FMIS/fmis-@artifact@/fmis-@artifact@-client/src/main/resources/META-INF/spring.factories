@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ @packageName@.client.config.Fmis@artifact4humpCase@FeignClientAutoConfiguration

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="logging.path" source="logging.path"/>
+    <springProperty scope="context" name="logging.level" source="info"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%c%L]-%-5level [%thread] %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="DEFAULT-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+        <file>${logging.path}/default.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logging.path}/%d{yyyy-MM-dd}/default-%i.log.gz</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!--文件达到 最大128MB时会被压缩和切割 -->
+                <maxFileSize>128 MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%c%L]-%-5level [%thread] %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${logging.path}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logging.path}/error.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <MaxHistory>7</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%c%L]-%-5level [%thread] %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <springProfile name="default">
+        <logger name="cn.ex" level="${logging.level}" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+
+        <root level="${logging.level}">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="DEFAULT-APPENDER"/>
+            <appender-ref ref="ERROR-APPENDER"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <logger name="cn.ex" level="${logging.level}" additivity="false">
+            <appender-ref ref="DEFAULT-APPENDER"/>
+            <appender-ref ref="ERROR-APPENDER"/>
+        </logger>
+
+        <root level="${logging.level}">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="DEFAULT-APPENDER"/>
+            <appender-ref ref="ERROR-APPENDER"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="cn.ex" level="${logging.level}" additivity="false">
+            <appender-ref ref="DEFAULT-APPENDER"/>
+            <appender-ref ref="ERROR-APPENDER"/>
+        </logger>
+
+        <root level="${logging.level}">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="DEFAULT-APPENDER"/>
+            <appender-ref ref="ERROR-APPENDER"/>
+        </root>
+    </springProfile>
+
+</configuration>

@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {artifact}-admin-application-red
+    deploy-editor-role: backend
+    deploy-managed: 'true'
+  name: {artifact}-admin-application-red
+  namespace: afrbtc-upms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {artifact}-admin-application-red
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {artifact}-admin-application-red
+    spec:
+      containers:
+      - env:
+        - name: aliyun_logs_{artifact}-admin-application-red
+          value: /logs/{artifact}-admin-application/*.log
+        args:
+        - --spring.profiles.active=prod
+        - --spring.cloud.config.label=prod-red
+        - --eureka.instance.metadataMap.region=red
+        command:
+        - java
+        - -server
+        - -Xms768m
+        - -Xmx768m
+        - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+        - -javaagent:/skywalking-agent/skywalking-agent.jar
+        - -Dskywalking.agent.namespace=gameserv
+        - -Dskywalking.agent.service_name={artifact}-admin-application
+        - -jar
+        - /application.jar
+        image: bigplayers-registry-vpc.cn-shenzhen.cr.aliyuncs.com/gameserv/{artifact}-admin-application:latest
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - mskick
+              - -registry-type
+              - eureka
+              - -registry-addr
+              - http://bigplayers-eureka:8761/eureka/
+              - -username
+              - bigplayer
+              - -password
+              - zyq1234560
+              - -app
+              - {artifact}-admin-application
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: @port4incr@
+            scheme: HTTP
+          initialDelaySeconds: 1800
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: {artifact}-admin-application-red
+        ports:
+        - containerPort: @port4incr@
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: @port4incr@
+            scheme: HTTP
+          initialDelaySeconds: 300
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: '1'
+            memory: 1Gi
+          requests:
+            cpu: 80m
+            memory: 1Gi
+        startupProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /actuator/health
+            port: @port4incr@
+            scheme: HTTP
+          timeoutSeconds: 5
+      imagePullSecrets:
+      - name: prod-private-registry
+      restartPolicy: Always

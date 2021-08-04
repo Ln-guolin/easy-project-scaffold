@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>{group}</groupId>
+        <artifactId>fmis-{artifact}-parent</artifactId>
+        <version>@vers@</version>
+        <relativePath>../fmis-{artifact}-parent</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>fmis-{artifact}-adapter</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>group.bigplayers.fmis</groupId>
+            <artifactId>fmis-adapter-quickstart</artifactId>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>bigplayers-releases</id>
+            <name>bigplayers-releases</name>
+            <url>https://maven.bigplayers.io/repository/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>bigplayers-snapshots</id>
+            <name>bigplayers-snapshots</name>
+            <url>https://maven.bigplayers.io/repository/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>

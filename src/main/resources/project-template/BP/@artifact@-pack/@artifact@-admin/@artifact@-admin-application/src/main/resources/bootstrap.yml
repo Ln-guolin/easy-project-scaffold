@@ -1,0 +1,32 @@
+server:
+  port: {adminPort}
+
+spring:
+  application:
+    name: {artifact}-admin-application
+  # 配置中心
+  cloud:
+    config:
+      fail-fast: true
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      label: ${spring.profiles.active}-@service.region@
+      discovery:
+        enabled: true
+        service-id: bigplayers-config
+  profiles:
+    active: prod
+  main:
+    allow-bean-definition-overriding: true
+# 注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    metadataMap:
+        group: bigplayers-service-group
+        region: @service.region@
+        version: 1.0
+  client:
+    service-url:
+      defaultZone: http://bigplayer:zyq1234560@bigplayers-eureka:8761/eureka/
+
