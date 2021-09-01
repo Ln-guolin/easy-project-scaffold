@@ -1,8 +1,4 @@
-package
-
-import org.springframework.context.annotation.ComponentScan;
-
-@packageName@;
+package @packageName@;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

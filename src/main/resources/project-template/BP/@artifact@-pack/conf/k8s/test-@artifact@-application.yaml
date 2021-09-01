@@ -87,6 +87,12 @@ spec:
             port: @port@
             scheme: HTTP
           timeoutSeconds: 5
+        volumeMounts:
+        - mountPath: /logs/{artifact}-application
+          name: volumn-sls-{artifact}-application-blue
       imagePullSecrets:
-      - name: prod-private-registry
+      - name: pro-private-registry
       restartPolicy: Always
+      volumes:
+      - name: volumn-sls-{artifact}-application-blue
+        emptyDir: {}

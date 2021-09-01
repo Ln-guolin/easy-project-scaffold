@@ -32,7 +32,6 @@ spec:
         - -server
         - -Xms768m
         - -Xmx768m
-        - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
         - -javaagent:/skywalking-agent/skywalking-agent.jar
         - -Dskywalking.agent.namespace=gameserv
         - -Dskywalking.agent.service_name={artifact}-admin-application
@@ -90,6 +89,12 @@ spec:
             port: @port4incr@
             scheme: HTTP
           timeoutSeconds: 5
+        volumeMounts:
+        - mountPath: /logs/{artifact}-admin-application
+          name: volumn-sls-{artifact}-admin-application-blue
       imagePullSecrets:
-      - name: prod-private-registry
+      - name: pro-private-registry
       restartPolicy: Always
+      volumes:
+      - name: volumn-sls-{artifact}-admin-application-blue
+        emptyDir: {}

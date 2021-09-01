@@ -1,9 +1,13 @@
 package cn.ex.project.scaffold.controller;
 
+import cn.ex.project.scaffold.common.ApiException;
 import cn.ex.project.scaffold.model.ParamDTO;
+import cn.ex.project.scaffold.common.R;
 import cn.ex.project.scaffold.service.ProjectGenerateService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +28,8 @@ public class ProjectGenerateController {
     @Resource
     private ProjectGenerateService projectGenerateService;
 
+    @Value("${template.path.list:}")
+    private String templatePathList;
     /**
      * 工程构建
      * @param paramDTO
@@ -32,26 +38,31 @@ public class ProjectGenerateController {
      */
     @PostMapping("/generate")
     public void generateServiceProject(ParamDTO paramDTO, HttpServletResponse response) throws Exception {
-
+        if (true) throw new ApiException("必填参数不能为空！");
         if(StringUtils.isAnyBlank(paramDTO.getTemplate(),paramDTO.getGroup(),paramDTO.getArtifact(),paramDTO.getPackageName())){
-            renderErrorResponse("必填参数不能为空", response);
-            return;
+            throw new ApiException("必填参数不能为空！");
         }
 
         if(paramDTO.getPort() == null){
-            renderErrorResponse("必填参数不能为空", response);
-            return;
+            throw new ApiException("必填参数不能为空！");
         }
 
         if(!paramDTO.getPackageName().startsWith(paramDTO.getGroup())){
-            renderErrorResponse("packageName必须是由group开头", response);
-            return;
+            throw new ApiException("packageName必须是由group开头");
         }
 
         response.setContentType("application/x-zip-compressed");
         response.setHeader("Content-Disposition", "attachment;fileName=" + paramDTO.getArtifact() + ".zip");
 
         projectGenerateService.generate(paramDTO, response.getOutputStream());
+    }
+
+    @GetMapping("/query/templates")
+    public R getConfTemplates() {
+        if(StringUtils.isBlank(templatePathList)){
+            return R.success();
+        }
+        return R.success(templatePathList.split(","));
     }
 
     /**
