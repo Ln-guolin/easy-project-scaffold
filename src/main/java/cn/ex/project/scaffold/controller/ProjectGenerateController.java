@@ -38,7 +38,6 @@ public class ProjectGenerateController {
      */
     @PostMapping("/generate")
     public void generateServiceProject(ParamDTO paramDTO, HttpServletResponse response) throws Exception {
-        if (true) throw new ApiException("必填参数不能为空！");
         if(StringUtils.isAnyBlank(paramDTO.getTemplate(),paramDTO.getGroup(),paramDTO.getArtifact(),paramDTO.getPackageName())){
             throw new ApiException("必填参数不能为空！");
         }
