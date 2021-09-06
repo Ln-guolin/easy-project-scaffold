@@ -1,4 +1,4 @@
-- url: /backend/gameserv-group/{group}-pack.git
+- url: /backend/gameserv-group/{artifact}-pack.git
   branch: rocket
   policy: mixed
 
