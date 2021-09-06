@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "{artifact}-admin-application", fallbackFactory = @artifact4humpCase@AdminFallbackFactory.class)
 public interface @artifact4humpCase@AdminFeign {
-    @PostMapping("/inner/admin/{artifact}/queryTest")
+    @PostMapping("/inner/admin/{artifact4path}/queryTest")
     FeignResult queryTest(@RequestHeader(SecurityConstants.FROM) String from);
 }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>group.bigplayers.gameserv</groupId>
         <artifactId>gameserv-parent</artifactId>
-        <version>1.3.2.0-SNAPSHOT</version>
+        <version>@vers@</version>
         <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>

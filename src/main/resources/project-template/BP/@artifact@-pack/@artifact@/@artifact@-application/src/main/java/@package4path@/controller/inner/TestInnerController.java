@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/inner/admin/@artifact4path@/")
+@RequestMapping("/inner/@artifact4path@/")
 public class TestInnerController {
     @Autowired
     private TestService testService;

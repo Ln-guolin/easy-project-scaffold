@@ -5,7 +5,7 @@
     <parent>
         <groupId>{group}</groupId>
         <artifactId>{artifact}-parent</artifactId>
-        <version>1.3.2.0-SNAPSHOT</version>
+        <version>@vers@</version>
         <relativePath>../{artifact}-parent</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
