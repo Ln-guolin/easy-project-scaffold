@@ -1,9 +1,11 @@
 package cn.ex.project.scaffold.controller;
 
 import cn.ex.project.scaffold.common.ApiException;
-import cn.ex.project.scaffold.model.ParamDTO;
 import cn.ex.project.scaffold.common.R;
-import cn.ex.project.scaffold.service.ProjectGenerateService;
+import cn.ex.project.scaffold.handler.TemplateCreateHandler;
+import cn.ex.project.scaffold.model.ConfigInfo;
+import cn.ex.project.scaffold.model.ParamDTO;
+import cn.ex.project.scaffold.repository.ConfigRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -26,10 +30,16 @@ import javax.servlet.http.HttpServletResponse;
 public class ProjectGenerateController {
 
     @Resource
-    private ProjectGenerateService projectGenerateService;
+    private TemplateCreateHandler templateCreateHandler;
 
-    @Value("${template.path.list:}")
+    @Resource
+    private ConfigRepository configRepository;
+
+    @Value("${template.mode.config:}")
+    private String templateMode;
+    @Value("${template.resources.path.list:}")
     private String templatePathList;
+
     /**
      * 工程构建
      * @param paramDTO
@@ -53,29 +63,30 @@ public class ProjectGenerateController {
         response.setContentType("application/x-zip-compressed");
         response.setHeader("Content-Disposition", "attachment;fileName=" + paramDTO.getArtifact() + ".zip");
 
-        projectGenerateService.generate(paramDTO, response.getOutputStream());
+        try {
+            templateCreateHandler.generate(paramDTO, response.getOutputStream());
+        } catch (Exception e) {
+            log.error("发生异常!",e);
+            throw new ApiException("发生异常");
+        }
     }
 
     @GetMapping("/query/templates")
     public R getConfTemplates() {
-        if(StringUtils.isBlank(templatePathList)){
-            return R.success();
+        // resources模式
+        if("resources".equals(templateMode)){
+            if(StringUtils.isBlank(templatePathList)){
+                return R.success();
+            }
+            return R.success(templatePathList.split(","));
         }
-        return R.success(templatePathList.split(","));
-    }
 
-    /**
-     * 渲染错误信息
-     * @param errMsg 错误信息
-     * @param response 响应
-     */
-    private void renderErrorResponse(String errMsg, HttpServletResponse response) {
-        try {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(errMsg);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        // git模式
+        List<ConfigInfo> configInfos = configRepository.findAll();
+        List<String> names = new ArrayList<>();
+        for(ConfigInfo config : configInfos){
+            names.add(config.getName());
         }
+        return R.success(names);
     }
 }

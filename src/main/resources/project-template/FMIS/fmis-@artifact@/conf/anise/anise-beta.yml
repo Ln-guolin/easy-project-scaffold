@@ -1,3 +1,0 @@
-- url: /backend/fmis-group/{artifact}.git
-  branch: beta
-  policy: snapshot
