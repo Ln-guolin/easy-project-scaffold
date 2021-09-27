@@ -19,5 +19,4 @@ JDBC URL：${spring.datasource.url}
 User Name：${spring.datasource.username}
 Password：${spring.datasource.password}
 -------------------------------------------------------
--------------------------------------------------------
 
