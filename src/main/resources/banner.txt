@@ -11,6 +11,7 @@
 应用基本配置
  - 名称: ${spring.application.name}
  - 应用端口: ${server.port}
+ - 模版模式: ${template.mode.config}
 目标：为快速拆分服务提供平台支持，实现一键自动构建可运行的基础单服务应用
 脚手架系统访问地址：http://localhost:${server.port}/
 -------------------------------------------------------
