@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://github.com/Ln-guolin/project-scaffold"><img src="https://soilove.oss-cn-hangzhou.aliyuncs.com/32e/pro-mall/easy-cache-starter.png"></a>
+	<a href="https://github.com/Ln-guolin/project-scaffold"><img src="https://soilove.oss-cn-hangzhou.aliyuncs.com/32e/pro-mall/potat.png" height="150px"></a>
 </p>
 
 ## 简介
