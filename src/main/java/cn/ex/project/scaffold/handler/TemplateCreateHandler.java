@@ -51,7 +51,7 @@ public class TemplateCreateHandler {
         File template = new File(templatePath);
         File[] templateFiles = new File(templatePath).listFiles();
         for (File templateFile : templateFiles) {
-            if(!templateFile.getName().startsWith(".")){
+            if(!templateFile.getName().startsWith(".") && !templateFile.getName().equals("README.md")){
                 template = templateFile;
                 break;
             }
