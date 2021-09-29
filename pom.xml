@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.ex.project</groupId>
-	<artifactId>project-scaffold</artifactId>
+	<artifactId>potat-project-scaffold</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
-	<name>project-scaffold</name>
+	<name>potat-project-scaffold</name>
 	<description>Project Scaffold Generator</description>
 
 	<parent>
