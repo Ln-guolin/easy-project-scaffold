@@ -58,19 +58,9 @@ public class TemplateCreateHandler {
         }
 
         // 替换变量
-        File file = generate(template, model);
-        if (file == null) {
-            throw new ApiException("构建失败！#1");
-        }
-        File targetFile = null;
-        for (File f : file.listFiles()) {
-            if (f.getName().contains(model.getArtifact())) {
-                targetFile = f;
-                break;
-            }
-        }
+        File targetFile = generate(template, model);
         if (out == null || targetFile == null) {
-            throw new ApiException("构建失败！#2");
+            throw new ApiException("构建失败！");
         }
 
         ZipUtils.zip(targetFile, out);
@@ -162,7 +152,6 @@ public class TemplateCreateHandler {
                     value = "";
                 }
 
-                result = result.replace("@" + field.getName() + "@", (String) value);
                 result = result.replace("{" + field.getName() + "}", (String) value);
             }
         } catch (Exception e) {

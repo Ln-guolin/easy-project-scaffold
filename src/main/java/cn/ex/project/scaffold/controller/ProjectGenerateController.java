@@ -37,8 +37,8 @@ public class ProjectGenerateController {
 
     @Value("${template.mode.config:}")
     private String templateMode;
-    @Value("${template.resources.path.list:}")
-    private String templatePathList;
+    @Value("${template.folder:}")
+    private String templateFolder;
 
     /**
      * 工程构建
@@ -75,10 +75,10 @@ public class ProjectGenerateController {
     public R getConfTemplates() {
         // resources模式
         if("resources".equals(templateMode)){
-            if(StringUtils.isBlank(templatePathList)){
+            if(StringUtils.isBlank(templateFolder)){
                 return R.success();
             }
-            return R.success(templatePathList.split(","));
+            return R.success(templateFolder.split(","));
         }
 
         // git模式

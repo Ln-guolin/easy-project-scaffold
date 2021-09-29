@@ -50,13 +50,35 @@
 
 |语法|适用范围|案例|
 |---|---|---|
-|@xx@|支持在文件、以及文件内容中使用|@artifact4hump@.java 或 @artifact4humpCase@Controller|
-|{xx}|支持文件内容中使用，推荐使用，能防止springboot变量冲突|{artifact4humpCase}Controller|
+|{xx}|支持在文件夹、文件、以及文件内容中使用|{artifact4hump}.java 或 {artifact4humpCase}Controller|
 
 
-### 如何快速添加新模版
-#### 添加步骤：
+### 模版配置
+
+#### 方式一：git 远程仓库
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
 - 2，在 resources/project-template 目录下创建一个新模版目录，如：DD，然后将修改好的模版工程放进去
-- 3，在 application.properties 文件中修改 template.path.list 配置，英文逗号分隔进行追加，如：template.path.list=BP,FMIS,DD
+- 3，在 application.properties 文件中修改配置： `template.mode.config=git`
+- 4，在 resources/db/data.sql 文件中配置模版的远程仓库地址信息
+- 5，启动工程，开始梦幻之旅
+
+#### 方式二：resources 工程静态文件
+- 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
+- 2，在 resources/project-template 目录下创建一个新模版目录，如：demo，然后将修改好的模版工程放进去
+- 3，在 application.properties 文件中修改配置：
+```
+template.mode.config=resources
+template.folder=demo
+```
+- 4，启动工程，开始梦幻之旅
+
+#### 方式三：local 本地磁盘文件
+- 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
+- 2，在本地 /xxx/project-template 目录下创建一个新模版目录，如：demo，然后将修改好的模版工程放进去
+- 3，在 application.properties 文件中修改配置：
+```
+template.mode.config=local
+template.local.path=/xxx/project-template
+template.folder=demo
+```
 - 4，启动工程，开始梦幻之旅
