@@ -49,26 +49,33 @@ public class TemplateCreateHandler {
 
         // 开始进行项目模版处理
         File template = new File(templatePath);
+        File[] templateFiles = new File(templatePath).listFiles();
+        for (File templateFile : templateFiles) {
+            if(!templateFile.getName().startsWith(".")){
+                template = templateFile;
+                break;
+            }
+        }
+
         // 替换变量
         File file = generate(template, model);
         if (file == null) {
-            return;
-        }
-        File[] files = file.listFiles();
-        if (files == null) {
-            return;
+            throw new ApiException("构建失败！#1");
         }
         File targetFile = null;
-        for (File f : files) {
+        for (File f : file.listFiles()) {
             if (f.getName().contains(model.getArtifact())) {
                 targetFile = f;
                 break;
             }
         }
-        if (out != null && targetFile != null) {
-            ZipUtils.zip(targetFile, out);
-            FileUtils.deleteAll(targetFile);
+        if (out == null || targetFile == null) {
+            throw new ApiException("构建失败！#2");
         }
+
+        ZipUtils.zip(targetFile, out);
+        FileUtils.deleteAll(targetFile);
+        log.info(paramDTO.getArtifact() + "构建成功！");
     }
 
     /**
@@ -157,11 +164,10 @@ public class TemplateCreateHandler {
 
                 result = result.replace("@" + field.getName() + "@", (String) value);
                 result = result.replace("{" + field.getName() + "}", (String) value);
-
-                result = result.replace("<!---->", "");
             }
         } catch (Exception e) {
             log.error("替换占位符失败", e);
+            throw new ApiException("替换占位符失败!");
         }
 
         return result;

@@ -57,7 +57,7 @@ public class ProjectGenerateController {
         }
 
         if(!paramDTO.getPackageName().startsWith(paramDTO.getGroup())){
-            throw new ApiException("packageName必须是由group开头");
+            throw new ApiException("packageName必须是由" + paramDTO.getGroup() + "开头");
         }
 
         response.setContentType("application/x-zip-compressed");
