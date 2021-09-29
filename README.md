@@ -1,7 +1,11 @@
-## 简介
-32e-应用脚手架
+<p align="center">
+	<a href="https://github.com/Ln-guolin/project-scaffold"><img src="https://soilove.oss-cn-hangzhou.aliyuncs.com/32e/pro-mall/easy-cache-starter.png"></a>
+</p>
 
-为快速拆分服务提供平台支持，自动构建可运行的基础单服务应用、编排文件、以及CI干预配置。
+## 简介
+potat脚手架平台
+
+为快速拆分服务提供平台支持，实现一键自动构建可运行的基础单服务应用。
 
 ## 环境
 
