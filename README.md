@@ -7,7 +7,7 @@ potat脚手架平台
 
 目的：为快速拆分服务提供平台支持，实现一键自动构建可运行的基础单服务应用。
 
-演示地址：[http://potat.32e.co:9999/](http://potat.32e.co:9999/)
+演示地址：[http://potat.32e.co/](http://potat.32e.co/)
 
 ## 环境
 
