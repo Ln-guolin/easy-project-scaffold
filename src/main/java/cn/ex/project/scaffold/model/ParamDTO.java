@@ -12,7 +12,7 @@ import lombok.Data;
 public class ParamDTO {
 
     /**
-     * 模版：bp/fmis
+     * 模版：客户端选择的模版名称
      */
     private String template;
 
