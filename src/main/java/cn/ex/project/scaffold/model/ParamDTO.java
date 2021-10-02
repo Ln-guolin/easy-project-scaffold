@@ -3,7 +3,7 @@ package cn.ex.project.scaffold.model;
 import lombok.Data;
 
 /**
- * 入参
+ * 入参对象
  *
  * @author: Chen GuoLin
  * @create: 2021-06-10 16:09
