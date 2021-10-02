@@ -7,6 +7,7 @@ import cn.ex.project.scaffold.util.FileUtils;
 import cn.ex.project.scaffold.util.JGitUtils;
 import cn.ex.project.scaffold.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +53,14 @@ public class ConfigMode4GitHandler implements ConfigModeHandlerIfc{
         FileUtils.deleteAll(new File(localUrl));
 
         // 执行git命令进行模版下载
-        JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl,configInfo.getUsername(),configInfo.getPassword());
+        if(StringUtils.isAnyBlank(configInfo.getUsername(),configInfo.getPassword())){
+            // 无需认证下载
+            JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl);
+        }
+        else {
+            // 需要认证账户密码下载
+            JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl,configInfo.getUsername(),configInfo.getPassword());
+        }
 
         // 完成下载，返回本地模版地址
         return localUrl;

@@ -41,12 +41,12 @@ public class ConfigInfo implements Serializable {
     private String branch;
 
     /**
-     * GIT用户名
+     * GIT用户名（可为空）
      */
     private String username;
 
     /**
-     * GIT密码
+     * GIT密码（可为空）
      */
     private String password;
 }

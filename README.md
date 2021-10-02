@@ -58,14 +58,26 @@ potat脚手架平台
 |---|---|---|
 |{xx}|支持在文件夹、文件、以及文件内容中使用|{artifact4hump}.java 或 {artifact4humpCase}Controller|
 
+模版Demo示例: [project-template/demo](https://github.com/Ln-guolin/potat-project-scaffold/tree/main/src/main/resources/project-template/demo)
 
 ### 模版配置
 
 #### 方式一：git 远程仓库
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
-- 2，在 resources/project-template 目录下创建一个新模版目录，如：DD，然后将修改好的模版工程放进去
+- 2，新建一个git工程，并将将修改好的模版工程放进去，如：
+```
+http://u.32e.co:8122/git/root/demo1.git
+    - {artifact}
+        - src
+            - main
+                - java
+                    - {package4path}
+                - resources
+            - test
+    - README.md
+```
 - 3，在 application.properties 文件中修改配置： `template.mode.config=git`
-- 4，在 resources/db/data.sql 文件中配置模版的远程仓库地址信息
+- 4，在 resources/db/data.sql 文件中配置模版的远程仓库地址信息，其中用户名和密码可以为空，表示无需认证即可下载
 - 5，启动工程，开始梦幻之旅
 
 #### 方式二：resources 工程静态文件
