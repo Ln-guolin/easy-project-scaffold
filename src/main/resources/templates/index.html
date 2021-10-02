@@ -35,8 +35,8 @@
     <!-- 自动填充表单 -->
     <script>
         function auto_set() {
-            var group=document.getElementById("group").value;
-            var artifact=document.getElementById("artifact").value;
+            var group=document.getElementById("group").value.toLowerCase();
+            var artifact=document.getElementById("artifact").value.toLowerCase();
             artifact = artifact.replace('-', '.');
             artifact = artifact.replace('_', '.');
             document.getElementById("packageName").value=group + "." + artifact;
