@@ -100,3 +100,11 @@ template.local.path=/xxx/project-template
 template.folder=demo
 ```
 - 4，启动工程，开始梦幻之旅
+
+## 如何部署脚手架平台
+- 1，运行mvn clean package完成打包
+- 2，拷贝project-scaffold.jar到服务器
+- 3，运行`sh`目录下的`potat.sh`脚本即可，如：
+```
+sh potat.sh start
+```
