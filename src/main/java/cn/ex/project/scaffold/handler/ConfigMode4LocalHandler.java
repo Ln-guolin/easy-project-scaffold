@@ -34,4 +34,9 @@ public class ConfigMode4LocalHandler implements ConfigModeHandlerIfc{
         // 直接获取本地磁盘地址
         return templateLocalPath + "/" + templateName;
     }
+
+    @Override
+    public void after() {
+        // nothing
+    }
 }

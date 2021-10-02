@@ -29,4 +29,9 @@ public class ConfigMode4ResourcesHandler implements ConfigModeHandlerIfc{
         // 直接获取resources地址
         return this.getClass().getResource("/project-template/" + templateName).getFile();
     }
+
+    @Override
+    public void after() {
+        // nothing
+    }
 }

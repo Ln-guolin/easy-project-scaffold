@@ -1,7 +1,6 @@
 package cn.ex.project.scaffold.handler;
 
 import cn.ex.project.scaffold.common.ApiException;
-import cn.ex.project.scaffold.constant.Constant;
 import cn.ex.project.scaffold.model.ParamDTO;
 import cn.ex.project.scaffold.model.ProjectModel;
 import cn.ex.project.scaffold.util.DateUtils;
@@ -41,13 +40,40 @@ public class TemplateCreateHandler {
         // 变量验证和转换
         ProjectModel model = variableConvert(paramDTO);
 
-        // 根据配置策略执行，获取模版地址
-        String templatePath = configModeHandlerIfcList.stream().filter(w -> w.mode())
+        // 根据模版类型获取代码构建策略
+        ConfigModeHandlerIfc ifc = configModeHandlerIfcList.stream().filter(w -> w.mode())
                 .findFirst()
-                .orElseThrow(() -> new ApiException("配置有误！"))
-                .execute(paramDTO.getTemplate());
+                .orElseThrow(() -> new ApiException("配置有误！"));
+
+        // 根据配置策略执行，并获取模版地址
+        String templatePath = ifc.execute(paramDTO.getTemplate());
 
         // 开始进行项目模版处理
+        File template = getTemplateFile(templatePath);
+
+        // 根据模版构建项目
+        File targetFile = generate(template, model);
+        if (out == null || targetFile == null) {
+            throw new ApiException("构建失败！");
+        }
+
+        // 将文件压缩后写入流
+        ZipUtils.zip(targetFile, out);
+
+        // 删除构建的所有目录，包含子目录和文件
+        FileUtils.deleteAll(targetFile);
+
+        // 执行策略后续处理方法
+        ifc.after();
+        log.info(paramDTO.getArtifact() + "构建成功！");
+    }
+
+    /**
+     * 获取模版File对象
+     * @param templatePath
+     * @return
+     */
+    private File getTemplateFile(String templatePath) {
         File template = new File(templatePath);
         File[] templateFiles = new File(templatePath).listFiles();
         for (File templateFile : templateFiles) {
@@ -56,20 +82,11 @@ public class TemplateCreateHandler {
                 break;
             }
         }
-
-        // 替换变量
-        File targetFile = generate(template, model);
-        if (out == null || targetFile == null) {
-            throw new ApiException("构建失败！");
-        }
-
-        ZipUtils.zip(targetFile, out);
-        FileUtils.deleteAll(targetFile);
-        log.info(paramDTO.getArtifact() + "构建成功！");
+        return template;
     }
 
     /**
-     * 生成文件
+     * 根据模版构建项目
      * @param template 模板文件
      * @param projectModel 项目模型
      * @return 文件
@@ -82,7 +99,6 @@ public class TemplateCreateHandler {
 
         File newFile = generateFile(template, projectModel);
         if (newFile == null) {
-            log.debug("generateFile(template, projectModel) result newFile == null");
             return null;
         }
 
@@ -96,20 +112,14 @@ public class TemplateCreateHandler {
                 generate(templateSubFile, projectModel);
             }
         } else {
-
             try (BufferedReader br = new BufferedReader(new FileReader(template))) {
                 try (PrintWriter pw = new PrintWriter(newFile)) {
-
                     String line = br.readLine();
                     while (line != null) {
                         String replacedLine = replacePlaceholder(line, projectModel);
-
-                        if (!replacedLine.contains(Constant.TOBE_REMOVED_MARK)) {
-                            pw.println(replacedLine);
-                        }
+                        pw.println(replacedLine);
                         line = br.readLine();
                     }
-
                     br.close();
                     pw.flush();
                 }catch (Exception e){
@@ -151,7 +161,6 @@ public class TemplateCreateHandler {
                 if (value == null) {
                     value = "";
                 }
-
                 result = result.replace("{" + field.getName() + "}", (String) value);
             }
         } catch (Exception e) {
@@ -174,16 +183,11 @@ public class TemplateCreateHandler {
             return null;
         }
 
-        if (path.contains(Constant.TOBE_REMOVED_MARK)) {
-            return null;
-        }
-
         File newFile = new File(path);
         if (templateFile.isDirectory()) {
             boolean created = newFile.mkdirs();
             log.debug("{}创建{}", path, created ? "成功" : "失败");
         }
-
         return newFile;
     }
 

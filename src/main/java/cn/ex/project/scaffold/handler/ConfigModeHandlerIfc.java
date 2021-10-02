@@ -5,4 +5,6 @@ public interface ConfigModeHandlerIfc {
     boolean mode();
 
     String execute(String templateName);
+
+    void after();
 }

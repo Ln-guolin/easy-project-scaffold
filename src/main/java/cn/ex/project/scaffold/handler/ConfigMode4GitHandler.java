@@ -46,7 +46,7 @@ public class ConfigMode4GitHandler implements ConfigModeHandlerIfc{
         }
 
         // 指定克隆到本地的路径
-        String localUrl = PathUtils.getProjectPath() + "template/";
+        String localUrl = PathUtils.getProjectPath() + "tmp/";
 
         // 先清空本地模版
         FileUtils.deleteAll(new File(localUrl));
@@ -56,5 +56,14 @@ public class ConfigMode4GitHandler implements ConfigModeHandlerIfc{
 
         // 完成下载，返回本地模版地址
         return localUrl;
+    }
+
+    @Override
+    public void after() {
+        // 指定克隆到本地的路径
+        String localUrl = PathUtils.getProjectPath() + "tmp/";
+
+        // 移除git模版信息
+        FileUtils.deleteAll(new File(localUrl));
     }
 }
