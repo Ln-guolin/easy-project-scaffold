@@ -37,8 +37,8 @@
         function auto_set() {
             var group=document.getElementById("group").value.toLowerCase();
             var artifact=document.getElementById("artifact").value.toLowerCase();
-            artifact = artifact.replace('-', '.');
-            artifact = artifact.replace('_', '.');
+            artifact = artifact.replaceAll('-', '.');
+            artifact = artifact.replaceAll('_', '.');
             document.getElementById("packageName").value=group + "." + artifact;
         }
     </script>
