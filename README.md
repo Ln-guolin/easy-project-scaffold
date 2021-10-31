@@ -1,10 +1,10 @@
 <p align="center">
-	<a href="https://github.com/Ln-guolin/project-scaffold"><img src="https://soilove.oss-cn-hangzhou.aliyuncs.com/32e/pro-mall/potat.png" height="150px"></a>
+	<a href="https://github.com/Ln-guolin/easy-project-scaffold"><img src="https://soilove.oss-cn-hangzhou.aliyuncs.com/32e/pro-mall/easy-p-s.png" height="150px"></a>
 </p>
 
 ## 简介
 
-easy-project-scaffold(简易工程脚手架)，为快速构建项目以及自定义模版的替换平台和工具支持。
+easy-project-scaffold(简易工程脚手架)，为快速构建项目以及自定义模版替换提供平台和工具支持。
 
 演示地址：[http://easyps.32e.co/](http://easyps.32e.co/)
 
@@ -76,7 +76,7 @@ http://u.32e.co:8122/git/root/demo1.git
     - README.md
 ```
 - 3，在 application.properties 文件中修改配置： `template.mode.config=git`
-- 4，在 resources/db/data.sql 文件中配置模版的远程仓库地址信息，其中用户名和密码可以为空，表示无需认证即可下载
+- 4，在 resources/db/config.sql 文件中配置模版的远程仓库地址信息，其中用户名和密码可以为空，表示无需认证即可下载
 - 5，启动工程，开始梦幻之旅
 
 #### 方式二：resources 工程静态文件
@@ -103,7 +103,11 @@ template.folder=demo
 ## 如何部署脚手架平台
 - 1，运行mvn clean package完成打包
 - 2，拷贝project-scaffold.jar到服务器
-- 3，运行`sh`目录下的`potat.sh`脚本即可(需要自己修改对应的jar路径)，如：
+- 3，运行`sh`目录下的`easy.sh`脚本即可(需要自己修改对应的jar路径)，如：
 ```
-sh potat.sh start
+sh easy.sh start
 ```
+
+## 迭代计划
+- 1，支持自定义模版和自定义参数配置
+- 2，支持登录后台，以及模版配置功能
