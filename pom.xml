@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.ex.project</groupId>
-	<artifactId>potat-project-scaffold</artifactId>
+	<artifactId>easy-project-scaffold</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
-	<name>potat-project-scaffold</name>
-	<description>Project Scaffold Generator</description>
+	<name>easy-project-scaffold</name>
+	<description>easy-project-scaffold(简易工程脚手架)，为快速构建项目以及自定义模版替换提供平台和工具支持。</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
