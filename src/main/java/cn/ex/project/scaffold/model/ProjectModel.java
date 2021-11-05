@@ -2,6 +2,8 @@ package cn.ex.project.scaffold.model;
 
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * 项目模型
  * <pre>
@@ -100,4 +102,9 @@ public class ProjectModel {
      * 输出：cn/ex/pro/biz/user	将packageName转换为"/"号分隔
      */
     private String package4path;
+
+    /**
+     * 自定义变量
+     */
+    private Map<String,String> customMap;
 }

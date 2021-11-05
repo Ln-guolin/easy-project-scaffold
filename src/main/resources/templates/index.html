@@ -66,40 +66,20 @@
 </div>
 <div class="am-g">
     <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
-        <form method="post" class="am-form" action="/generate" onsubmit="return formValidation()">
-            <label for="group">模版:</label>
-            <select id="template" name="template">
+        <form id="form" method="post" class="am-form" action="/generate" onsubmit="return formValidation()">
+            <label>模版:</label>
+            <select id="template" name="template" onchange="change_template()">
+                <option>请选择模版</option>
             </select>
             <br>
-            <label for="group">Group:</label>
-            <input name="group" minlength="3" required id="group" placeholder="指定groupId，如：cn.ex" value=""
-                   class="am-form-field am-radius" onblur="auto_set()">
-            <br>
-            <label for="artifact">Artifact:</label>
-            <input name="artifact" minlength="3" required id="artifact" placeholder="服务制品，如：user" value=""
-                   class="am-form-field am-radius" onblur="auto_set()">
-            <br>
-            <label for="packageName">PackageName:</label>
-            <input name="packageName" minlength="3" required id="packageName" placeholder="包路径，如：cn.ex.xxx" value=""
-                   class="am-form-field am-radius">
-            <br>
-            <label for="port">Port:</label>
-            <input name="port" id="port" placeholder="端口号，如：8080" value=""
-                   class="am-form-field am-radius">
-            <br>
-            <label for="version">【选填】Version:</label>
-            <input name="version" id="version" placeholder="版本号，如：1.0.0.0-SNAPSHOT" value=""
-                   class="am-form-field am-radius">
-            <br>
-            <label for="description">【选填】Description:</label>
-            <input name="description" id="description" placeholder="服务名称，如：用户服务" value=""
-                   class="am-form-field am-radius">
-            <br>
+            <div class="row row-padded" id="def-area-id"></div>
+            <div class="row row-padded" id="custom-area-id"></div>
             <div class="am-cf">
                 <input type="submit" name="" value="构 建" class="am-btn am-btn-primary am-btn-sm am-fl">
             </div>
         </form>
         <hr>
+        <input id="mode" type="hidden">
     </div>
 </div>
 <div class="am-g">
@@ -113,8 +93,107 @@
 <script src="assets/js/iziToast.min.js" type="text/javascript"></script>
 <script>
     $(function(){
+        // 加载模版
+        load_templates();
+
+        // 判断启动模式
+        query_template_mode();
+    });
+
+    /**
+     * 加载模版
+     **/
+    function query_template_mode() {
         $.ajax({
-            url:'/query/templates',
+            url:'/query/templateMode',
+            type:'get',
+            dataType:'json',
+            success:function(data){
+                console.log(data);
+                if(data.code == 200){
+                    mode = data.data;
+                    document.getElementById("mode").setAttribute("value",mode);
+
+                    // 如果是git模式，则更换为支持自定义参数的请求地址
+                    if(mode == 'git'){
+                        document.getElementById("form").setAttribute("action","/generate4custom");
+                    }
+                }
+            },
+            error:function(s){
+                console.log("错误信息："+s);
+            }
+        })
+    }
+
+    /**
+     * 切换模版
+     **/
+    function change_template() {
+        // 变量
+        let template = $('#template').val();
+        if(template == '请选择模版'){
+            document.getElementById("def-area-id").innerHTML = "";
+            document.getElementById("custom-area-id").innerHTML = "";
+            return;
+        }
+
+        // 模式判断，非git模式仅支持默认的变量
+        let mode = $('#mode').val();
+        if(mode != 'git'){
+            document.getElementById("def-area-id").innerHTML = "";
+            document.getElementById("custom-area-id").innerHTML = "";
+            loadHtml4DefVariable();
+            return;
+        }
+
+        // 根据模版获取配置的变量
+        $.ajax({
+            url:'/query/template',
+            type:'post',
+            data:JSON.stringify({ "template":template }),
+            dataType:'json',
+            contentType: "application/json",
+            success:function(data){
+                console.log(data);
+                if(data.code == 200){
+                    // 默认变量
+                    var enableDefVariable = data.data.enableDefVariable;
+                    if(enableDefVariable == '1'){
+                        loadHtml4DefVariable();
+                    }else{
+                        document.getElementById("def-area-id").innerHTML = "";
+                    }
+
+                    // 自定义变量
+                    var customVariable = data.data.customVariable;
+                    if(customVariable != null && customVariable != ''){
+                        var variables = customVariable.split(",");
+                        let htmllet = "";
+                        for (var variable in variables){
+                            htmllet += '<label>'+variables[variable]+':</label>';
+                            htmllet += '<input name="'+variables[variable]+'" id="'+variables[variable]+'" value="" class="am-form-field am-radius">';
+                            htmllet += '<br>';
+                        }
+                        //嵌入HTML方法
+                        document.getElementById("custom-area-id").innerHTML = htmllet;
+                    }else{
+                        document.getElementById("custom-area-id").innerHTML = "";
+                    }
+                }
+            },
+            error:function(s){
+                console.log("错误信息："+s);
+            }
+        })
+    }
+
+    /**
+     * 加载模版
+     **/
+    function load_templates() {
+        $.ajax({
+            url:'/query/templateNames',
             type:'get',
             dataType:'json',
             success:function(data){
@@ -130,16 +209,44 @@
                 console.log("错误信息："+s);
             }
         })
-    });
+    }
+
+    /**
+     * 加载默认变量页面
+     **/
+    function loadHtml4DefVariable(){
+        let htmllet = "";
+        htmllet += '<label>Group:</label>';
+        htmllet += '<input name="group" minlength="3" required id="group" placeholder="指定groupId，如：cn.ex" value="" class="am-form-field am-radius" onblur="auto_set()">';
+        htmllet += '<br>';
+        htmllet += '<label>Artifact:</label>';
+        htmllet += '<input name="artifact" minlength="3" required id="artifact" placeholder="服务制品名称，如：user" value="" class="am-form-field am-radius" onblur="auto_set()">';
+        htmllet += '<br>';
+        htmllet += '<label>PackageName:</label>';
+        htmllet += '<input name="packageName" minlength="3" required id="packageName" placeholder="包路径，如：cn.ex.xxx" value="" class="am-form-field am-radius">';
+        htmllet += '<br>';
+        htmllet += '<label>Port:</label>';
+        htmllet += '<input name="port" id="port" placeholder="端口号，如：8080" value="" class="am-form-field am-radius">';
+        htmllet += '<br>';
+        htmllet += '<label>【选填】Version:</label>';
+        htmllet += '<input name="version" id="version" placeholder="版本号，如：1.0.0.0-SNAPSHOT" value="" class="am-form-field am-radius">';
+        htmllet += '<br>';
+        htmllet += '<label>【选填】Description:</label>';
+        htmllet += '<input name="description" id="description" placeholder="服务名称，如：用户服务" value="" class="am-form-field am-radius">';
+        htmllet += '<br>';
+        //嵌入HTML方法
+        document.getElementById("def-area-id").innerHTML = htmllet;
+    }
+
     /**
      *判断是否是数字
      **/
     function isRealNum(val){
-        // isNaN()函数 把空串 空格 以及NUll 按照0来处理 所以先去除，
 
         if(val === "" || val ==null){
             return false;
         }
+
         if(!isNaN(val)){
             //对于空数组和只有一个数值成员的数组或全是数字组成的字符串，isNaN返回false，例如：'123'、[]、[2]、['123'],isNaN返回false,
             //所以如果不需要val包含这些特殊情况，则这个判断改写为if(!isNaN(val) && typeof val === 'number' )
@@ -160,7 +267,7 @@
         let description = $('#description').val();
 
         let errMsgs = [];
-        if (template === '') {
+        if (template === '' || template ==='请选择') {
             errMsgs.push('模版类型 不能为空');
         }
         if (group === '') {

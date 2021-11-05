@@ -3,10 +3,7 @@ package cn.ex.project.scaffold.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -49,4 +46,25 @@ public class ConfigInfo implements Serializable {
      * GIT密码（可为空）
      */
     private String password;
+
+    /**
+     * 是否启用默认变量
+     * <pre>
+     *     1：启用
+     *     0：禁用
+     * </pre>
+     */
+    @Column(name = "enable_def_variable")
+    private Integer enableDefVariable;
+
+    /**
+     * 自定义变量
+     * <pre>
+     *     格式：多个变量名使用英文逗号分隔
+     *     示例：variable1,variable2
+     *     注：自定义变量禁止使用通用变量
+     * </pre>
+     */
+    @Column(name = "custom_variable")
+    private String customVariable;
 }

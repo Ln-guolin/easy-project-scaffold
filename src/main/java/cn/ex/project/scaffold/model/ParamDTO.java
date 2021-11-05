@@ -2,6 +2,8 @@ package cn.ex.project.scaffold.model;
 
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * 入参对象
  *
@@ -51,4 +53,8 @@ public class ParamDTO {
      */
     private String description;
 
+    /**
+     * 自定义变量
+     */
+    private Map<String,String> customMap;
 }

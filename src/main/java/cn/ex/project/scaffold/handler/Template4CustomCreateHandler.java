@@ -24,7 +24,7 @@ import java.util.List;
  **/
 @Slf4j
 @Component
-public class TemplateCreateHandler {
+public class Template4CustomCreateHandler {
 
     @Autowired
     private List<ConfigModeHandlerIfc> configModeHandlerIfcList;
@@ -116,7 +116,7 @@ public class TemplateCreateHandler {
                 try (PrintWriter pw = new PrintWriter(newFile)) {
                     String line = br.readLine();
                     while (line != null) {
-                        String replacedLine = replacePlaceholder(line, projectModel);
+                        String replacedLine = replacePlaceHolder(line, projectModel);
                         pw.println(replacedLine);
                         line = br.readLine();
                     }
@@ -140,28 +140,28 @@ public class TemplateCreateHandler {
      * @param projectModel 项目模型
      * @return 替换后的字符串
      */
-    private String replacePlaceholder(String source, ProjectModel projectModel) {
-        return replacePlaceHolder(source, projectModel, ProjectModel.class);
-    }
-
-    /**
-     * 替换占位符
-     * @param source 元字符串
-     * @param projectModel 项目模型
-     * @param clazz 类
-     * @return 替换后的字符串
-     */
-    private String replacePlaceHolder(String source, ProjectModel projectModel, Class<? extends ProjectModel> clazz) {
+    private String replacePlaceHolder(String source, ProjectModel projectModel) {
         String result = source;
 
         try {
-            for (Field field : clazz.getDeclaredFields()) {
+            // 默认变量
+            for (Field field : projectModel.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
+                if("customMap".equals(field.getName())){
+                    continue;
+                }
                 Object value = field.get(projectModel);
                 if (value == null) {
                     value = "";
                 }
                 result = result.replace("{" + field.getName() + "}", (String) value);
+            }
+
+            // 自定义变量
+            if(projectModel.getCustomMap() != null && projectModel.getCustomMap().size() > 0){
+                for(String variable : projectModel.getCustomMap().keySet()){
+                    result = result.replace("{" + variable + "}",projectModel.getCustomMap().get(variable));
+                }
             }
         } catch (Exception e) {
             log.error("替换占位符失败", e);
@@ -178,7 +178,7 @@ public class TemplateCreateHandler {
      * @return 新文件
      */
     private File generateFile(File templateFile, ProjectModel projectModel) {
-        String path = replacePlaceholder(templateFile.getPath(), projectModel);
+        String path = replacePlaceHolder(templateFile.getPath(), projectModel);
         if (path == null) {
             return null;
         }
@@ -201,12 +201,12 @@ public class TemplateCreateHandler {
         model.setGroup(paramDTO.getGroup());
         model.setArtifact(paramDTO.getArtifact());
         model.setPackageName(paramDTO.getPackageName());
-        model.setPort(String.valueOf(paramDTO.getPort()));
+        model.setPort(parse4port(paramDTO,false));
         model.setVers(StringUtils.isNotBlank(paramDTO.getVersion()) ? paramDTO.getVersion() : "1.0.0.0-SNAPSHOT");
-        model.setDesc(StringUtils.isNotBlank(paramDTO.getDescription()) ? paramDTO.getDescription() : paramDTO.getArtifact() + "服务");
+        model.setDesc(parse4desc(paramDTO));
         model.setCreateTime(DateUtils.getTime(System.currentTimeMillis()));
         model.setCreateDate(DateUtils.getTime(System.currentTimeMillis(),DateUtils.FORMAT_YYYY_MM_DD));
-        model.setPort4incr(String.valueOf(paramDTO.getPort() + 1));
+        model.setPort4incr(parse4port(paramDTO,true));
         model.setArtifact4comma(TemplateVariableReplaceUtils.parse2link(paramDTO.getArtifact(),"."));
         model.setArtifact4underline(TemplateVariableReplaceUtils.parse2link(paramDTO.getArtifact(),"_"));
         model.setArtifact4path(TemplateVariableReplaceUtils.parse2link(paramDTO.getArtifact(),"/"));
@@ -214,8 +214,28 @@ public class TemplateCreateHandler {
         model.setArtifact4humpCase(TemplateVariableReplaceUtils.parse2humpCase(paramDTO.getArtifact()));
         model.setGroup4path(TemplateVariableReplaceUtils.parse2link(paramDTO.getGroup(),"/"));
         model.setPackage4path(TemplateVariableReplaceUtils.parse2link(paramDTO.getPackageName(),"/"));
+        model.setCustomMap(paramDTO.getCustomMap());
         return model;
     }
 
 
+    private String parse4desc(ParamDTO paramDTO) {
+        if (StringUtils.isNotBlank(paramDTO.getDescription()) ) {
+            return paramDTO.getDescription();
+        }
+        if (StringUtils.isNotBlank(paramDTO.getArtifact()) ) {
+            return paramDTO.getArtifact() + "服务";
+        }
+        return "";
+    }
+
+    private String parse4port(ParamDTO paramDTO,boolean incr) {
+        if (paramDTO.getPort() == null) {
+            return "";
+        }
+        if (incr) {
+            return (paramDTO.getPort() + 1) + "";
+        }
+        return paramDTO.getPort() + "";
+    }
 }
