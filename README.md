@@ -53,8 +53,6 @@ easy-project-scaffold(简易工程脚手架)，为快速构建项目以及自定
 |{xx}|【推荐】支持在文件夹、文件、以及文件内容中使用|{artifact4hump}.java 或 {artifact4humpCase}Controller|
 |@xx@|支持在文件夹、文件、以及文件内容中使用|@artifact4hump@.java 或 @artifact4humpCase@Controller|
 
-模版Demo示例: [project-template/demo](https://github.com/Ln-guolin/potat-project-scaffold/tree/main/src/main/resources/project-template/demo)
-
 ### 模版配置
 
 #### 方式一：git 远程仓库（推荐）
