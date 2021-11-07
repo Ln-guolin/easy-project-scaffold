@@ -1,6 +1,7 @@
 package cn.ex.project.scaffold.handler;
 
 import cn.ex.project.scaffold.common.ApiException;
+import cn.ex.project.scaffold.common.CommonConstant;
 import cn.ex.project.scaffold.model.ParamDTO;
 import cn.ex.project.scaffold.model.ProjectModel;
 import cn.ex.project.scaffold.util.DateUtils;
@@ -48,11 +49,8 @@ public class Template4CustomCreateHandler {
         // 根据配置策略执行，并获取模版地址
         String templatePath = ifc.execute(paramDTO.getTemplate());
 
-        // 开始进行项目模版处理
-        File template = getTemplateFile(templatePath);
-
         // 根据模版构建项目
-        File targetFile = generate(template, model);
+        File targetFile = generate(new File(templatePath), model);
         if (out == null || targetFile == null) {
             throw new ApiException("构建失败！");
         }
@@ -61,28 +59,11 @@ public class Template4CustomCreateHandler {
         ZipUtils.zip(targetFile, out);
 
         // 删除构建的所有目录，包含子目录和文件
-        FileUtils.deleteAll(targetFile);
+       // FileUtils.deleteAll(targetFile);
 
         // 执行策略后续处理方法
         ifc.after();
         log.info(paramDTO.getArtifact() + "构建成功！");
-    }
-
-    /**
-     * 获取模版File对象
-     * @param templatePath
-     * @return
-     */
-    private File getTemplateFile(String templatePath) {
-        File template = new File(templatePath);
-        File[] templateFiles = new File(templatePath).listFiles();
-        for (File templateFile : templateFiles) {
-            if(!templateFile.getName().startsWith(".") && !templateFile.getName().equals("README.md")){
-                template = templateFile;
-                break;
-            }
-        }
-        return template;
     }
 
     /**
@@ -112,23 +93,27 @@ public class Template4CustomCreateHandler {
                 generate(templateSubFile, projectModel);
             }
         } else {
-            try (BufferedReader br = new BufferedReader(new FileReader(template))) {
-                try (PrintWriter pw = new PrintWriter(newFile)) {
-                    String line = br.readLine();
-                    while (line != null) {
-                        String replacedLine = replacePlaceHolder(line, projectModel);
-                        pw.println(replacedLine);
-                        line = br.readLine();
+            if(!template.getName().startsWith(".")){
+                try (BufferedReader br = new BufferedReader(new FileReader(template))) {
+                    try (PrintWriter pw = new PrintWriter(newFile)) {
+                        String line = br.readLine();
+                        while (line != null) {
+                            String replacedLine = replacePlaceHolder(line, projectModel);
+                            pw.println(replacedLine);
+                            line = br.readLine();
+                        }
+                        br.close();
+                        pw.flush();
+                    }catch (Exception e){
+                        log.error("发生异常!#1",e);
+                        throw new ApiException("发生异常!#1");
                     }
-                    br.close();
-                    pw.flush();
                 }catch (Exception e){
-                    log.error("发生异常!#1",e);
-                    throw new ApiException("发生异常!#1");
+                    log.error("发生异常!#2",e);
+                    throw new ApiException("发生异常!#2");
                 }
-            }catch (Exception e){
-                log.error("发生异常!#2",e);
-                throw new ApiException("发生异常!#2");
+            }else{
+                log.info("[filter]跳过文件：" + template.getName());
             }
         }
         return newFile;
@@ -142,12 +127,13 @@ public class Template4CustomCreateHandler {
      */
     private String replacePlaceHolder(String source, ProjectModel projectModel) {
         String result = source;
-
+        result = result.replace(CommonConstant.PROJECT_INNER_GIT_TEMPLATE, CommonConstant.PROJECT_INNER_GIT_PRODUCT);
+        result = result.replace(CommonConstant.PROJECT_INNER_LOCAL_TEMPLATE_PATH, CommonConstant.PROJECT_INNER_LOCAL_PRODUCT_PATH);
         try {
             // 默认变量
             for (Field field : projectModel.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
-                if("customMap".equals(field.getName())){
+                if(CommonConstant.PROJECT_TEMPLATE_CUSTOM_MAP.equals(field.getName())){
                     continue;
                 }
                 Object value = field.get(projectModel);
@@ -155,12 +141,14 @@ public class Template4CustomCreateHandler {
                     value = "";
                 }
                 result = result.replace("{" + field.getName() + "}", (String) value);
+                result = result.replace("@" + field.getName() + "@", (String) value);
             }
 
             // 自定义变量
             if(projectModel.getCustomMap() != null && projectModel.getCustomMap().size() > 0){
                 for(String variable : projectModel.getCustomMap().keySet()){
                     result = result.replace("{" + variable + "}",projectModel.getCustomMap().get(variable));
+                    result = result.replace("@" + variable + "@",projectModel.getCustomMap().get(variable));
                 }
             }
         } catch (Exception e) {

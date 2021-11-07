@@ -1,6 +1,7 @@
 package cn.ex.project.scaffold.handler;
 
 import cn.ex.project.scaffold.common.ApiException;
+import cn.ex.project.scaffold.common.CommonConstant;
 import cn.ex.project.scaffold.model.ConfigInfo;
 import cn.ex.project.scaffold.repository.ConfigRepository;
 import cn.ex.project.scaffold.util.FileUtils;
@@ -47,10 +48,7 @@ public class ConfigMode4GitHandler implements ConfigModeHandlerIfc{
         }
 
         // 指定克隆到本地的路径
-        String localUrl = PathUtils.getProjectPath() + "tmp/";
-
-        // 先清空本地模版
-        FileUtils.deleteAll(new File(localUrl));
+        String localUrl = PathUtils.getProjectPath() + CommonConstant.PROJECT_INNER_GIT_TEMPLATE_PATH;
 
         // 执行git命令进行模版下载
         if(StringUtils.isAnyBlank(configInfo.getUsername(),configInfo.getPassword())){
@@ -68,10 +66,8 @@ public class ConfigMode4GitHandler implements ConfigModeHandlerIfc{
 
     @Override
     public void after() {
-        // 指定克隆到本地的路径
-        String localUrl = PathUtils.getProjectPath() + "tmp/";
-
-        // 移除git模版信息
-        FileUtils.deleteAll(new File(localUrl));
+        // 删除目录和文件
+        String filePath = PathUtils.getProjectPath() + CommonConstant.PROJECT_INNER_GIT_TMP_PATH;
+        FileUtils.deleteAll(new File(filePath));
     }
 }

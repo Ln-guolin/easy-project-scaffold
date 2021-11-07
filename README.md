@@ -8,16 +8,8 @@ easy-project-scaffold(简易工程脚手架)，为快速构建项目以及自定
 
 演示地址：[http://easyps.32e.co/](http://easyps.32e.co/)
 
-## 环境
 
-|环境|要求|
-|---|---|
-|jre|8+|
-|spring-boot|2.2.4.RELEASE|
-
-
-
-## 输入参数
+## 默认输入参数
 
 |参数|格式|描述|案例|
 |---|---|---|---|
@@ -50,34 +42,45 @@ easy-project-scaffold(简易工程脚手架)，为快速构建项目以及自定
 |group4path|group|cn/ex/pro|将group转换为"/"号分隔|
 |package4path|packageName|cn/ex/pro/biz/user|将package转换为"/"号分隔|
 
+### 自定义变量
+
+- 系统支持变量自定义，可以在git模式下使用，详情可参考下文：" 方式一：git 远程仓库（推荐）"
 
 ### 模版变量占位符语法
 
 |语法|适用范围|案例|
 |---|---|---|
-|{xx}|支持在文件夹、文件、以及文件内容中使用|{artifact4hump}.java 或 {artifact4humpCase}Controller|
+|{xx}|【推荐】支持在文件夹、文件、以及文件内容中使用|{artifact4hump}.java 或 {artifact4humpCase}Controller|
+|@xx@|支持在文件夹、文件、以及文件内容中使用|@artifact4hump@.java 或 @artifact4humpCase@Controller|
 
 模版Demo示例: [project-template/demo](https://github.com/Ln-guolin/potat-project-scaffold/tree/main/src/main/resources/project-template/demo)
 
 ### 模版配置
 
-#### 方式一：git 远程仓库
+#### 方式一：git 远程仓库（推荐）
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
-- 2，新建一个git工程，并将将修改好的模版工程放进去，如：
-```
-http://u.32e.co:8122/git/root/demo1.git
-    - {artifact}
-        - src
-            - main
-                - java
-                    - {package4path}
-                - resources
-            - test
-    - README.md
-```
+- 2，新建一个git工程，并将将修改好的模版工程放进去，git工程示例：[http://u.32e.co:8122/](http://u.32e.co:8122/)
 - 3，在 application.properties 文件中修改配置： `template.mode.config=git`
-- 4，在 resources/db/config.sql 文件中配置模版的远程仓库地址信息，其中用户名和密码可以为空，表示无需认证即可下载
-- 5，启动工程，开始梦幻之旅
+- 4，在 resources/db/config.sql 文件中配置模版的远程仓库地址信息，其中用户名和密码可以为空，表示无需认证即可下载，如：
+```sql
+-- 模版和分支配置，以及git仓库的账号密码配置，可匿名访问的仓库账号密码可以为空
+INSERT INTO `config_info`(name,url,branch,username,password,enable_def_variable) VALUES ('默认工程变量', 'http://u.32e.co:8122/git/root/demo1.git','master', 'root', 'root',1);
+INSERT INTO `config_info`(name,url,branch,username,password,enable_def_variable,custom_variable) VALUES ('默认工程变量+自定义变量', 'http://u.32e.co:8122/git/root/demo2.git','master', 'root', 'root',1,'prefix,suffix');
+INSERT INTO `config_info`(name,url,branch,username,password,enable_def_variable,custom_variable) VALUES ('自定义变量', 'http://u.32e.co:8122/git/root/demo3.git','master', 'root', 'root',0,'app-name,k8s-namespace,nacos-registry-addr,nacos-namespace,port,k8s-image-pull-secrets');
+```
+##### config_info表字段解释：
+
+|字段名|是否必填|字段描述|
+|---|---|---|
+|name|是|模版名称，自定义|
+|url|是|git仓库地址|
+|branch|是|git仓库分支|
+|username|否|登录git仓库的用户名，为空表示无需认证|
+|password|否|登录git仓库的密码，为空表示无需认证|
+|enable_def_variable|否|是否需要开启默认变量，标准工程创建一般需要开启，可选值：1或0|
+|custom_variable|否|自定义变量，多个自定义变量使用英文逗号分隔，如：v1,v2|
+
+- 5，启动工程使用
 
 #### 方式二：resources 工程静态文件
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
@@ -87,7 +90,7 @@ http://u.32e.co:8122/git/root/demo1.git
 template.mode.config=resources
 template.folder=demo
 ```
-- 4，启动工程，开始梦幻之旅
+- 4，启动工程使用
 
 #### 方式三：local 本地磁盘文件
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
@@ -95,10 +98,10 @@ template.folder=demo
 - 3，在 application.properties 文件中修改配置：
 ```
 template.mode.config=local
-template.local.path=/xxx/project-template
+template.local.path=/xxx/
 template.folder=demo
 ```
-- 4，启动工程，开始梦幻之旅
+- 4，启动工程使用
 
 ## 如何部署脚手架平台
 - 1，运行mvn clean package完成打包
@@ -107,7 +110,3 @@ template.folder=demo
 ```
 sh easy.sh start
 ```
-
-## 迭代计划
-- 1，支持自定义模版和自定义参数配置
-- 2，支持登录后台，以及模版配置功能
