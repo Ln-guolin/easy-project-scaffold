@@ -58,9 +58,6 @@ public class Template4CustomCreateHandler {
         // 将文件压缩后写入流
         ZipUtils.zip(targetFile, out);
 
-        // 删除构建的所有目录，包含子目录和文件
-       // FileUtils.deleteAll(targetFile);
-
         // 执行策略后续处理方法
         ifc.after();
         log.info(paramDTO.getArtifact() + "构建成功！");
@@ -74,7 +71,7 @@ public class Template4CustomCreateHandler {
      * @throws IOException 异常
      */
     private File generate(File template, ProjectModel projectModel) {
-        if (template == null) {
+        if (template == null || template.getPath().contains(".git")) {
             return null;
         }
 
