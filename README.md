@@ -82,7 +82,7 @@ INSERT INTO `config_info`(name,url,branch,username,password,enable_def_variable,
 
 #### 方式二：resources 工程静态文件
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
-- 2，在 resources/project-template 目录下创建一个新模版目录，如：demo，然后将修改好的模版工程放进去
+- 2，在 resources/easyps-template 目录下创建一个新模版目录，如：demo，然后将修改好的模版工程放进去
 - 3，在 application.properties 文件中修改配置：
 ```
 template.mode.config=resources
@@ -92,7 +92,7 @@ template.folder=demo
 
 #### 方式三：local 本地磁盘文件
 - 1，根据文档介绍的变量，修改自己的项目，作为脚手架的模版
-- 2，在本地 /xxx/project-template 目录下创建一个新模版目录，如：demo，然后将修改好的模版工程放进去
+- 2，在本地 /xxx/easyps-template 目录下创建一个新模版目录，如：demo，然后将修改好的模版工程放进去
 - 3，在 application.properties 文件中修改配置：
 ```
 template.mode.config=local

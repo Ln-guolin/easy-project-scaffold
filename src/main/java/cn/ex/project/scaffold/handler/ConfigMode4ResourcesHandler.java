@@ -32,13 +32,13 @@ public class ConfigMode4ResourcesHandler implements ConfigModeHandlerIfc{
     @Override
     public String execute(String templateName) {
         // 直接获取resources地址
-        return this.getClass().getResource(CommonConstant.PROJECT_INNER_LOCAL_TEMPLATE_PATH + "/" + templateName).getFile();
+        return this.getClass().getResource(CommonConstant.PROJECT_INNER_PATH_TEMPLATE + "/" + templateName).getFile();
     }
 
     @Override
     public void after() {
         // 删除目录和文件
-        String filePath = this.getClass().getResource(CommonConstant.PROJECT_INNER_LOCAL_PRODUCT_PATH).getFile();;
+        String filePath = this.getClass().getResource(CommonConstant.PROJECT_INNER_PATH_PRODUCT).getFile();;
         FileUtils.deleteAll(new File(filePath));
     }
 }

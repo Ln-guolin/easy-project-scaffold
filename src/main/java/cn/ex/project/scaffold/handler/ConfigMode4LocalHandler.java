@@ -37,13 +37,13 @@ public class ConfigMode4LocalHandler implements ConfigModeHandlerIfc{
     @Override
     public String execute(String templateName) {
         // 直接获取本地磁盘地址
-        return templateLocalPath + CommonConstant.PROJECT_INNER_LOCAL_TEMPLATE_PATH + "/" + templateName;
+        return templateLocalPath + CommonConstant.PROJECT_INNER_PATH_TEMPLATE + "/" + templateName;
     }
 
     @Override
     public void after() {
         // 删除目录和文件
-        String filePath = templateLocalPath + CommonConstant.PROJECT_INNER_LOCAL_PRODUCT_PATH;
+        String filePath = templateLocalPath + CommonConstant.PROJECT_INNER_PATH_PRODUCT;
         FileUtils.deleteAll(new File(filePath));
     }
 }

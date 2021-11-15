@@ -124,8 +124,7 @@ public class Template4CustomCreateHandler {
      */
     private String replacePlaceHolder(String source, ProjectModel projectModel) {
         String result = source;
-        result = result.replace(CommonConstant.PROJECT_INNER_GIT_TEMPLATE, CommonConstant.PROJECT_INNER_GIT_PRODUCT);
-        result = result.replace(CommonConstant.PROJECT_INNER_LOCAL_TEMPLATE_PATH, CommonConstant.PROJECT_INNER_LOCAL_PRODUCT_PATH);
+        result = result.replace(CommonConstant.PROJECT_INNER_PATH_TEMPLATE, CommonConstant.PROJECT_INNER_PATH_PRODUCT);
         try {
             // 默认变量
             for (Field field : projectModel.getClass().getDeclaredFields()) {
