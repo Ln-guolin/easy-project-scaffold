@@ -5,7 +5,6 @@ import cn.ex.project.scaffold.common.CommonConstant;
 import cn.ex.project.scaffold.model.ParamDTO;
 import cn.ex.project.scaffold.model.ProjectModel;
 import cn.ex.project.scaffold.util.DateUtils;
-import cn.ex.project.scaffold.util.FileUtils;
 import cn.ex.project.scaffold.util.TemplateVariableReplaceUtils;
 import cn.ex.project.scaffold.util.ZipUtils;
 import lombok.extern.slf4j.Slf4j;
