@@ -65,8 +65,8 @@
     <hr/>
 </div>
 <div class="am-g">
-    <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
-        <form id="form" method="post" class="am-form" action="/generate" onsubmit="return formValidation()">
+    <div id="form-dev" class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+        <form id="form" method="post" class="am-form" action="/generate4custom" onsubmit="return formValidation()">
             <label>模版:</label>
             <select id="template" name="template" onchange="change_template()">
                 <option>请选择模版</option>
@@ -102,7 +102,7 @@
 
     /**
      * 加载模版
-     **/
+     */
     function query_template_mode() {
         $.ajax({
             url:'/query/templateMode',
@@ -113,11 +113,6 @@
                 if(data.code == 200){
                     mode = data.data;
                     document.getElementById("mode").setAttribute("value",mode);
-
-                    // 如果是git模式，则更换为支持自定义参数的请求地址
-                    if(mode == 'git'){
-                        document.getElementById("form").setAttribute("action","/generate4custom");
-                    }
                 }
             },
             error:function(s){
@@ -128,7 +123,7 @@
 
     /**
      * 切换模版
-     **/
+     */
     function change_template() {
         // 变量
         let template = $('#template').val();
@@ -190,7 +185,7 @@
 
     /**
      * 加载模版
-     **/
+     */
     function load_templates() {
         $.ajax({
             url:'/query/templateNames',
@@ -240,7 +235,7 @@
 
     /**
      *判断是否是数字
-     **/
+     */
     function isRealNum(val){
 
         if(val === "" || val ==null){
@@ -256,8 +251,10 @@
             return false;
         }
     }
+    /**
+     * 表单验证
+     */
     let formValidation = function() {
-
         let template = $('#template').val();
         let group = $('#group').val();
         let artifact = $('#artifact').val();

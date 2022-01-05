@@ -55,13 +55,12 @@ public class ProjectGenerateController {
      * @param response
      * @throws Exception
      */
-    @PostMapping("/generate4custom")
-    public void generate4custom(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String body = getRequestBody(request);
-        log.info("[api]接口：/generate4custom，paramDTO=" + body);
+    @PostMapping(value = "/generate4custom")
+    public void generate4custom(HttpServletResponse response,@RequestParam HashMap<String, String> paramMap) {
+        log.info("[api]接口：/generate4custom，paramMap=" + paramMap);
 
-        // 将参数转换为map形式
-        Map<String, String> paramMap = KeyMapUtils.parse2Map(body);
+        // 验证paramMap参数合法性
+        checkParamMap(paramMap);
 
         // 设置默认变量
         Gson gson = new Gson();
@@ -88,40 +87,23 @@ public class ProjectGenerateController {
         }
     }
 
-
-
     /**
-     * 工程构建
-     * @param paramDTO
-     * @param response
-     * @throws Exception
+     * 验证paramMap参数合法性
+     * @param paramMap
      */
-    @PostMapping("/generate")
-    public void generate(ParamDTO paramDTO, HttpServletResponse response) {
-        log.info("[api]接口：/generate，paramDTO=" + paramDTO.toString());
-        if(StringUtils.isAnyBlank(paramDTO.getTemplate(),paramDTO.getGroup(),paramDTO.getArtifact(),paramDTO.getPackageName())){
-            throw new ApiException("必填参数不能为空！");
+    private void checkParamMap(HashMap<String, String> paramMap) {
+
+        // 移除空数据
+        Iterator<Map.Entry<String, String>> it = paramMap.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<String, String> entry = it.next();
+            if(StringUtils.isBlank(entry.getValue())){
+                it.remove();
+            }
         }
 
-        if(paramDTO.getPort() == null){
-            throw new ApiException("必填参数不能为空！");
-        }
-
-        if(!paramDTO.getPackageName().startsWith(paramDTO.getGroup())){
-            throw new ApiException("packageName必须是由" + paramDTO.getGroup() + "开头");
-        }
-
-        // 文件response处理
-        response.setContentType("application/x-zip-compressed");
-        response.setHeader("Content-Disposition", "attachment;fileName=" +  paramDTO.getArtifact() + ".zip");
-
-        try {
-            template4CustomCreateHandler.generate(paramDTO, response.getOutputStream());
-        } catch (ApiException e){
-            throw e;
-        } catch (Exception e) {
-            log.error("发生异常!",e);
-            throw new ApiException("发生异常");
+        if(paramMap == null || paramMap.size() <= 1){
+            throw new ApiException("参数为空");
         }
     }
 
@@ -151,47 +133,5 @@ public class ProjectGenerateController {
         ConfigInfo configInfo = configRepository.findByName(paramDTO.getTemplate());
         log.info("[api]接口：/query/template，template="+paramDTO.getTemplate()+",configInfo=" + configInfo);
         return R.success(configInfo);
-    }
-
-    private String getRequestBody(HttpServletRequest request) throws UnsupportedEncodingException {
-        String body = "";
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
-        InputStream inputStream = null;
-        try {
-            inputStream = request.getInputStream();
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            } else {
-                stringBuilder.append("");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        body = stringBuilder.toString();
-        body = URLDecoder.decode( body, "UTF-8" );
-        return body;
     }
 }
