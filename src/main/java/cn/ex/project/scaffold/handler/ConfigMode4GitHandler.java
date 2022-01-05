@@ -53,11 +53,17 @@ public class ConfigMode4GitHandler implements ConfigModeHandlerIfc{
         // 执行git命令进行模版下载
         if(StringUtils.isAnyBlank(configInfo.getUsername(),configInfo.getPassword())){
             // 无需认证下载
-            JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl);
+            boolean res = JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl);
+            if(!res){
+                throw new ApiException("代码下载失败-无需认证下载模式");
+            }
         }
         else {
             // 需要认证账户密码下载
-            JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl,configInfo.getUsername(),configInfo.getPassword());
+            boolean res = JGitUtils.gitClone(configInfo.getUrl(),configInfo.getBranch(),localUrl,configInfo.getUsername(),configInfo.getPassword());
+            if(!res){
+                throw new ApiException("代码下载失败-需要认证账户密码下载模式");
+            }
         }
 
         // 完成下载，返回本地模版地址
